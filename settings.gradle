@@ -1,0 +1,8 @@
+rootProject.name = 'gradle-test'
+
+include (':dashboard')
+project(':dashboard').projectDir = new File('src/dashboard')
+
+include(':shared')
+project(':shared').projectDir = new File('src/shared')
+

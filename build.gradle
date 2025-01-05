@@ -1,0 +1,130 @@
+group = 'com.wgdesign'
+version = '0.0.1-SNAPSHOT'
+
+// Main project (located in apps/)
+buildscript {
+	repositories {
+		mavenCentral()
+	}
+	dependencies {
+		classpath('org.springframework.boot:spring-boot-gradle-plugin:3.4.1')
+	}
+}
+
+
+
+allprojects {
+	apply plugin: 'java'
+	apply plugin: 'org.springframework.boot'
+	apply plugin: 'io.spring.dependency-management'
+
+	java {
+		toolchain {
+			languageVersion = JavaLanguageVersion.of(21)
+		}
+	}
+
+	repositories {
+		mavenCentral()
+	}
+
+	dependencies {
+		implementation 'org.springframework:spring-context-support:6.2.1'
+		implementation 'org.springframework.boot:spring-boot-starter-data-jpa:3.4.1'
+
+		runtimeOnly 'org.postgresql:postgresql:42.7.4'
+
+	}
+
+//	tasks.named('test') {
+//		useJUnitPlatform()
+//	}
+
+	// Just to print in console the paths of the projects
+	task view_paths {
+		doLast { task ->
+			println "$task.project.name"
+			println "------------------"
+			println "Main: $sourceSets.main.java.srcDirTrees"
+			println "   Resources: $sourceSets.main.resources.srcDirTrees"
+			println "Tests: $sourceSets.test.java.srcDirTrees"
+			println "   Resources: $sourceSets.test.resources.srcDirTrees"
+		}
+	}
+
+	test {
+		useJUnitPlatform()
+
+		testLogging {
+			events "passed", "skipped", "failed"
+		}
+	}
+}
+
+// All subprojects (located in src/*)
+subprojects {
+	group = "com.wgdesign.${rootProject.name}"
+
+	sourceSets {
+		main {
+			java { srcDirs 'main' }
+			resources { srcDirs 'main/resources' }
+		}
+
+		test {
+			java { srcDirs 'test' }
+			resources { srcDirs 'test/resources' }
+		}
+	}
+
+	dependencies {
+		implementation 'org.springframework.boot:spring-boot-starter-web:3.4.1'
+
+		testImplementation rootProject.sourceSets.main.output
+		testImplementation 'org.springframework.boot:spring-boot-starter-test:3.4.1'
+
+		if (project.name != "shared") {
+			implementation project(":shared")
+			testImplementation project(":shared").sourceSets.test.output
+		}
+	}
+
+	bootJar {
+		enabled = false
+	}
+
+	jar {
+		enabled = true
+	}
+}
+
+sourceSets {
+	main {
+		java {
+			srcDirs 'apps/main/java'
+		}
+		resources {
+			srcDirs 'apps/main/resources'
+		}
+	}
+	test {
+		java {
+			srcDirs 'apps/test/java'
+		}
+		resources {
+			srcDirs 'apps/test/resources'
+		}
+	}
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-web:3.4.1'
+
+	implementation project(':shared')
+	implementation project(':dashboard')
+
+	developmentOnly 'org.springframework.boot:spring-boot-devtools:3.4.1'
+
+	testImplementation 'org.springframework.boot:spring-boot-starter-test:3.4.1'
+	testRuntimeOnly 'org.junit.platform:junit-platform-launcher:1.11.4'
+}
