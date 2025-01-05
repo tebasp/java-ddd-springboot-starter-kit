@@ -13,8 +13,8 @@ public class JpaUserRepository implements UserRepository {
     private final EntityManagerFactory emf;
     private final EntityManager em;
 
-    public JpaUserRepository() {
-        emf = HibernateClient.getSessionFactory();
+    public JpaUserRepository(HibernateClient hibernateClient) {
+        emf = hibernateClient.getSessionFactory();
         em = emf.createEntityManager();
     }
 
