@@ -8,6 +8,8 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class JpaUserRepository implements UserRepository {
     private final EntityManagerFactory emf;
@@ -19,10 +21,10 @@ public class JpaUserRepository implements UserRepository {
     }
 
     @Override
-    public User getById(int id) {
+    public Optional<User> getById(int id) {
         try {
             User user = em.find(User.class, id);
-            return user;
+            return Optional.ofNullable(user);
         } catch (RuntimeException e) {
             System.out.println(e.getMessage());
             throw new UsersException("Error retrieving user");

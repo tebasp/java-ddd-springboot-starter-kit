@@ -5,6 +5,8 @@ import com.wgdesign.dashboard.users.domain.exception.UsersException;
 import com.wgdesign.dashboard.users.domain.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class UserFinder {
     private final UserRepository jpaUserRepository;
@@ -15,13 +17,9 @@ public class UserFinder {
 
     public User find(Integer id)  {
         try {
-            User user = jpaUserRepository.getById(id);
-
-            if (user == null) {
-                throw new UsersException("User not found");
-            }
-
-            return user;
+            return jpaUserRepository.getById(id).orElseThrow(
+                    () -> new UsersException("User not found")
+            );
         } catch (UsersException e ) {
             System.out.println(e.getMessage());
             throw new UsersException("Error on UserFinder: " + e.getMessage());
