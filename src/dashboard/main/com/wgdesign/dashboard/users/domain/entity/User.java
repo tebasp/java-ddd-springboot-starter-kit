@@ -1,14 +1,17 @@
 package com.wgdesign.dashboard.users.domain.entity;
 
+import com.wgdesign.dashboard.users.domain.dto.UserCreatedDomainEvent;
+import com.wgdesign.shared.domain.AggregateRoot;
 import jakarta.persistence.*;
 import jakarta.transaction.Transactional;
 
-import java.sql.Date;
+import java.util.Date;
+
 
 @Entity
 @Transactional
 @Table(name = "users")
-public class User {
+public class User extends AggregateRoot {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -25,6 +28,14 @@ public class User {
     public User(String name, Date birthDate) {
         this.name = name;
         this.birthDate = birthDate;
+    }
+
+    public static User create(String name, Date birthDate) {
+        User user = new User(name, birthDate);
+
+        user.record(new UserCreatedDomainEvent(user.name, user.name, user.birthDate));
+
+        return user;
     }
 
     public Integer getId() {

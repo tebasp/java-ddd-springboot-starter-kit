@@ -22,10 +22,7 @@ public class UserPostController {
 
     @PostMapping("/users")
     public ResponseEntity<User> handle(@Valid @RequestBody UserCreateDto userDto) {
-        System.out.println("User created" + userDto.toString());
-
-        creator.create();
-
+        creator.create(userDto.getName(), userDto.getBirthDate());
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 }
