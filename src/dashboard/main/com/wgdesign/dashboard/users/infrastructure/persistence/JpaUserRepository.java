@@ -30,4 +30,16 @@ public class JpaUserRepository implements UserRepository {
             throw new UsersException("Error retrieving user");
         }
     }
+
+    @Override
+    public void save(User user) {
+        try {
+            em.getTransaction().begin();
+            em.persist(user);
+            em.getTransaction().commit();
+        } catch (RuntimeException e) {
+            System.out.println(e.getMessage());
+            throw new UsersException("Error saving user");
+        }
+    }
 }
